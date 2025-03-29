@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>元号⇔西暦 変換ツール</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 2rem;
+        background-color: #f0f0f0;
+      }
+      h1 {
+        text-align: center;
+      }
+      .container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      select {
+        padding: 0.5rem;
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        width: 100%;
+      }
+      button {
+        padding: 0.7rem;
+        font-size: 1rem;
+        width: 100%;
+        background-color: #0071e3;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #005bb5;
+      }
+      .result {
+        margin-top: 1rem;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>元号 ⇔ 西暦 変換</h1>
+    <div class="container">
+      <label>変換タイプ：</label>
+      <select id="mode">
+        <option value="toWestern">元号 → 西暦</option>
+        <option value="toEra">西暦 → 元号</option>
+      </select>
+
+      <label>入力：</label>
+      <input type="text" id="input" placeholder="例: 令和5 または 2023" />
+
+      <button onclick="convert()">変換</button>
+
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      const eraMap = [
+        { name: "令和", start: 2019 },
+        { name: "平成", start: 1989 },
+        { name: "昭和", start: 1926 },
+      ];
+
+      function convert() {
+        const mode = document.getElementById("mode").value;
+        const input = document.getElementById("input").value.trim();
+        const resultEl = document.getElementById("result");
+
+        if (mode === "toWestern") {
+          for (const era of eraMap) {
+            if (input.startsWith(era.name)) {
+              const yearInEra = parseInt(input.slice(era.name.length)) || 1;
+              const westernYear = era.start + yearInEra - 1;
+              resultEl.textContent = `${era.name}${yearInEra}年 は 西暦 ${westernYear}年`;
+              return;
+            }
+          }
+          resultEl.textContent = "入力された元号が認識できません。例: 令和5";
+        } else {
+          const westernYear = parseInt(input);
+          if (isNaN(westernYear)) {
+            resultEl.textContent = "西暦を正しく入力してください。例: 2023";
+            return;
+          }
+          for (const era of eraMap) {
+            if (westernYear >= era.start) {
+              const yearInEra = westernYear - era.start + 1;
+              resultEl.textContent = `西暦 ${westernYear}年 は ${era.name}${yearInEra}年`;
+              return;
+            }
+          }
+          resultEl.textContent = "昭和以前の元号には対応していません。";
+        }
+      }
+    </script>
+  </body>
+</html>
